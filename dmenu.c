@@ -658,6 +658,11 @@ insert:
 		break;
 	}
 
+  if (incremental) {
+    puts(text);
+    fflush(stdout);
+  }
+
 draw:
 	drawmenu();
 }
