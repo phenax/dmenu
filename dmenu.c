@@ -883,7 +883,7 @@ usage(void)
 	      "             [-nb color] [-nf color] [-sb color] [-sf color] \n"
 	      "             [-nhb color] [-nhf color] [-shb color] [-shf color]\n"
 	      "             [-h height] [-x xoffset] [-y yoffset] [-w width]\n"
-	      "             [-it text] [-r] [-w windowid] [-n number]\n", stderr);
+	      "             [-it text] [-r] [-wid windowid] [-n number]\n", stderr);
 	exit(1);
 }
 
@@ -1013,7 +1013,7 @@ main(int argc, char *argv[])
 			colors[SchemeSelHighlight][ColBg] = argv[++i];
 		else if (!strcmp(argv[i], "-shf")) /* selected hi foreground color */
 			colors[SchemeSelHighlight][ColFg] = argv[++i];
-		else if (!strcmp(argv[i], "-w"))   /* embedding window id */
+		else if (!strcmp(argv[i], "-wid"))   /* embedding window id */
 			embed = argv[++i];
 		else if (!strcmp(argv[i], "-n"))   /* preselected item */
       preselected = atoi(argv[++i]);
@@ -1031,9 +1031,10 @@ main(int argc, char *argv[])
 	root = RootWindow(dpy, screen);
 	if (!embed || !(parentwin = strtol(embed, NULL, 0)))
 		parentwin = root;
-	if (!XGetWindowAttributes(dpy, parentwin, &wa))
+	if (!XGetWindowAttributes(dpy, parentwin, &wa)) {
 		die("could not get embedding window attributes: 0x%lx",
 		    parentwin);
+  }
 	drw = drw_create(dpy, screen, root, wa.width, wa.height);
 	readxresources();
 	if (!drw_fontset_create(drw, (const char**)fonts, LENGTH(fonts)))
