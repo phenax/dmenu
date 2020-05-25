@@ -11,7 +11,7 @@ static const char *fonts[] = {
 	"Font Awesome 5 Free:pixelsize=13:antialias=true:autohint=true",
 };
 
-static const char *prompt = "run :: ";      /* -p  option; prompt to the left of input field */
+static const char *prompt = "> ";      /* -p  option; prompt to the left of input field */
 
 static const char *colors[SchemeLast][2] = {
 	/*     fg         bg       */
