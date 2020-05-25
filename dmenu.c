@@ -677,6 +677,10 @@ paste(void)
 		insert(p, (q = strchr(p, '\n')) ? q - p : (ssize_t)strlen(p));
 		XFree(p);
 	}
+	if (incremental) {
+		puts(text);
+		fflush(stdout);
+	}
 	drawmenu();
 }
 
@@ -873,7 +877,7 @@ usage(void)
 	      "             [-nb color] [-nf color] [-sb color] [-sf color] \n"
 	      "             [-nhb color] [-nhf color] [-shb color] [-shf color]\n"
 	      "             [-h height] [-x xoffset] [-y yoffset] [-w width]\n"
-	      "             [-it text] [-w windowid] [-n number]\n", stderr);
+	      "             [-it text] [-r] [-w windowid] [-n number]\n", stderr);
 	exit(1);
 }
 
@@ -929,6 +933,8 @@ main(int argc, char *argv[])
 			fast = 1;
 		else if (!strcmp(argv[i], "-F"))   /* grabs keyboard before reading stdin */
 			fuzzy = 0;
+		else if (!strcmp(argv[i], "-r"))   /* incremental */
+			incremental = 1;
 		else if (!strcmp(argv[i], "-i")) { /* case-insensitive item matching */
 			fstrncmp = strncasecmp;
 			fstrstr = cistrstr;

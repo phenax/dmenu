@@ -31,3 +31,6 @@ static unsigned int preselected = 0;
 
 /* Size of the window border */
 static const unsigned int border_width = 0;
+
+/* -r  option; if 1, outputs text each time a key is pressed */
+static int incremental = 0;
