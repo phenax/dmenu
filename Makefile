@@ -6,7 +6,7 @@ include config.mk
 SRC = drw.c dmenu.c stest.c util.c
 OBJ = $(SRC:.c=.o)
 
-all: options dmenu stest
+all: clean options dmenu stest
 
 options:
 	@echo dmenu build options:
@@ -30,6 +30,7 @@ stest: stest.o
 
 clean:
 	rm -f dmenu stest $(OBJ) dmenu-$(VERSION).tar.gz
+	rm -f config.h
 
 dist: clean
 	mkdir -p dmenu-$(VERSION)
