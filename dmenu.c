@@ -952,6 +952,11 @@ main(int argc, char *argv[])
 	XWindowAttributes wa;
 	int i, fast = 0;
 
+	if (case_insensitive) {
+    fstrncmp = strncasecmp;
+    fstrstr = cistrstr;
+  }
+
 	for (i = 1; i < argc; i++)
 		/* these options take no arguments */
 		if (!strcmp(argv[i], "-v")) {      /* prints version information */
@@ -966,8 +971,11 @@ main(int argc, char *argv[])
 		else if (!strcmp(argv[i], "-r"))   /* incremental */
 			incremental = 1;
 		else if (!strcmp(argv[i], "-i")) { /* case-insensitive item matching */
-			fstrncmp = strncasecmp;
-			fstrstr = cistrstr;
+      fstrncmp = strncasecmp;
+      fstrstr = cistrstr;
+		} else if (!strcmp(argv[i], "-I")) { /* case-sensitive item matching */
+      fstrncmp = strncmp;
+      fstrstr = strstr;
 		} else if (i + 1 == argc)
 			usage();
 		/* these options take one argument */
