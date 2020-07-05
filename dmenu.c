@@ -76,6 +76,7 @@ static Visual *visual;
 static int depth;
 static Colormap cmap;
 static Clr *scheme[SchemeLast];
+int censor_input = 0;
 
 #include "config.h"
 
@@ -250,6 +251,7 @@ recalculatenumbers()
 static void
 drawmenu(void)
 {
+  char *censort;
 	unsigned int curpos;
 	struct item *item;
 	int x = 0, y = 0, fh = drw->fonts->h, w;
@@ -265,6 +267,15 @@ drawmenu(void)
 	w = (lines > 0 || !matches) ? mw - x : inputw;
 	drw_setscheme(drw, scheme[SchemeNorm]);
 	drw_text(drw, x, 0, w, bh, lrpad / 2, text, 0);
+
+  if (censor_input) {
+    censort = ecalloc(1, sizeof(text));
+    memset(censort, censor_character, strlen(text));
+    drw_text(drw, x, 0, w, bh, lrpad / 2, censort, 0);
+    free(censort);
+  } else {
+    drw_text(drw, x, 0, w, bh, lrpad / 2, text, 0);
+  }
 
 	curpos = TEXTW(text) - TEXTW(&text[cursor]);
 	if ((curpos += lrpad / 2 - 1) < w) {
@@ -744,6 +755,11 @@ readstdin(void)
 	size_t i, imax = 0, size = 0;
 	unsigned int tmpmax = 0;
 
+  if (censor_input) {
+    inputw = lines = 0;
+    return;
+  }
+
 	/* read each line from stdin and add it to the item list */
 	for (i = 0; fgets(buf, sizeof buf, stdin); i++) {
 		if (i + 1 >= size / sizeof *items)
@@ -928,7 +944,7 @@ setup(void)
 static void
 usage(void)
 {
-	fputs("usage: dmenu [-bfiv] [-l lines] [-p prompt] [-fn font] [-m monitor]\n"
+	fputs("usage: dmenu [-bPfiv] [-l lines] [-p prompt] [-fn font] [-m monitor]\n"
 	      "             [-nb color] [-nf color] [-sb color] [-sf color] \n"
 	      "             [-nhb color] [-nhf color] [-shb color] [-shf color]\n"
 	      "             [-h height] [-x xoffset] [-y yoffset] [-w width]\n"
@@ -1025,7 +1041,9 @@ main(int argc, char *argv[])
 		} else if (!strcmp(argv[i], "-I")) { /* case-sensitive item matching */
       fstrncmp = strncmp;
       fstrstr = strstr;
-		} else if (i + 1 == argc)
+		} else if (!strcmp(argv[i], "-P")) {   /* is the input a password */
+      censor_input = 1;
+    } else if (i + 1 == argc)
 			usage();
 		/* these options take one argument */
 		else if (!strcmp(argv[i], "-l"))   /* number of lines in vertical list */
@@ -1069,8 +1087,9 @@ main(int argc, char *argv[])
 		else if (!strcmp(argv[i], "-it")) {   /* embedding window id */
 			const char * text = argv[++i];
 			insert(text, strlen(text));
-		} else
+    } else {
 			usage();
+    }
 
 	if (!setlocale(LC_CTYPE, "") || !XSupportsLocale())
 		fputs("warning: no locale support\n", stderr);

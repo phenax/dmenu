@@ -13,6 +13,8 @@ static const char *fonts[] = {
 
 static const char *prompt = "> ";      /* -p  option; prompt to the left of input field */
 
+static const char censor_character = '*';
+
 static const unsigned int bgalpha = 0xe6;
 static const unsigned int fgalpha = OPAQUE;
 
